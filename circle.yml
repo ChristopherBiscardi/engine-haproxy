@@ -1,0 +1,19 @@
+machine:
+  services:
+    - docker
+dependencies:
+  override:
+    - docker info
+    - env
+    - docker build -t biscarch/engine-haproxy .
+test:
+  override:
+    - echo true
+deployment:
+  hub:
+    tag: /[0-9]+(\.[0-9]+)*/
+    commands:
+      - env
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker tag biscarch/engine-haproxy biscarch/engine-haproxy:$CIRCLE_TAG
+      - docker push biscarch/engine-haproxy:$CIRCLE_TAG
